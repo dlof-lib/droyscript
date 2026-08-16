@@ -1,0 +1,61 @@
+name: Build droy script x APK
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "android/**"
+      - ".github/workflows/build-apk.yml"
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install NDK + CMake
+        run: |
+          sdkmanager --install "ndk;26.1.10909125" "cmake;3.22.1"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build debug APK
+        working-directory: android
+        run: gradle assembleDebug --no-daemon
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: droyscript-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+
+  build-engine-only:
+    # Fast sanity check of the pure C++ engine (lexer/parser/interpreter),
+    # independent of the Android/NDK toolchain.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compile engine CLI
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Iengine/include \
+              -o droyc engine/src/lexer.cpp engine/src/interpreter.cpp engine/src/main.cpp
+
+      - name: Run sample program
+        run: ./droyc engine/examples/sample.droy
