@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.DroyScript" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">#FF3300</item>
+        <item name="colorPrimaryDark">#111111</item>
+        <item name="colorAccent">#FF3300</item>
+    </style>
+</resources>
