@@ -1,0 +1,29 @@
+@see.droy=start
+
+@group Users
+    $row id=1 name="Ali"  number=100
+    $row id=2 name="Omar" number=200
+    $row id=3 name="Sara" number=100
+@end
+
+@collection ActiveUsers <= Users.equals(number=100)
+@end
+
+@bridge Friendship
+    edge id=1 => id=2
+    edge id=2 => id=3
+@end
+
+@map Settings
+    "theme"   => "dark"
+    "version" => 1
+@end
+
+~print(Users)
+~print(ActiveUsers)
+~print(Friendship)
+~print(Settings)
+~len(Users)
+~sum(Users, number)
+
+@see.droy=end
